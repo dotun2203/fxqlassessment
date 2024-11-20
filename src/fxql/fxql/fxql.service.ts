@@ -22,25 +22,48 @@ export class FxqlService {
     }
 
     const upsertPromises = entries.map(async (entry) => {
-      const existingEntry = await this.fxqlRepository.findOneBy({
+      return this.fxqlRepository
+        .createQueryBuilder()
+        .insert()
+        .into(FxqlEntry)
+        .values(entry)
+        .orUpdate(
+          ['buyPrice', 'sellPrice', 'capAmount', 'updatedAt'],
+          ['sourceCurrency', 'destinationCurrency'],
+        )
+        .execute();
+    });
+
+    await Promise.all(upsertPromises);
+
+    const result = await this.fxqlRepository.find({
+      where: entries.map((entry) => ({
         sourceCurrency: entry.sourceCurrency,
         destinationCurrency: entry.destinationCurrency,
-      });
-      if (existingEntry) {
-        Object.assign(existingEntry, entry);
-        return this.fxqlRepository.save(existingEntry);
-      } else {
-        return this.fxqlRepository.save(entry);
-      }
+      })),
     });
-    const savedEntries = await Promise.all(upsertPromises);
-    return savedEntries;
+    return result;
+
+    // const upsertPromises = entries.map(async (entry) => {
+    //   const existingEntry = await this.fxqlRepository.findOneBy({
+    //     sourceCurrency: entry.sourceCurrency,
+    //     destinationCurrency: entry.destinationCurrency,
+    //   });
+    //   if (existingEntry) {
+    //     Object.assign(existingEntry, entry);
+    //     return this.fxqlRepository.save(existingEntry);
+    //   } else {
+    //     return this.fxqlRepository.save(entry);
+    //   }
+    // });
+    // const savedEntries = await Promise.all(upsertPromises);
+    // return savedEntries;
   }
 
   async findAll(): Promise<FxqlEntry[]> {
     return this.fxqlRepository.find({
       where: { deletedAt: null },
-      order: { EntryId: 'ASC' },
+      order: { EntryId: 'DESC' },
     });
   }
 

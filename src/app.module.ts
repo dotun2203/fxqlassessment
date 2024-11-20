@@ -17,7 +17,10 @@ import { RateLimiterModule } from 'nestjs-rate-limiter';
       password: process.env.DATABASE_PASSWORD,
       database: process.env.DATABASE_NAME,
       autoLoadEntities: true,
-      synchronize: true,
+      synchronize: false,
+      ssl: {
+        rejectUnauthorized: false,
+      },
     }),
     RateLimiterModule.register({
       points: 10,

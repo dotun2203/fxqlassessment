@@ -1,5 +1,5 @@
 #  Node.js LTS version
-FROM node:18-alpine AS builder
+FROM node:18-alpine
 
 # set working directory
 WORKDIR /app
@@ -12,21 +12,11 @@ RUN npm install
 
 COPY . .
 
-# build nest applicaion
+# build
 RUN npm run build
 
-FROM node:18-alpine
+# expose port 3000
+EXPOSE 7000
 
-WORKDIR /app
-
-COPY package*.json ./
-
-RUN npm install --only=production
-
-COPY --from=builder /app/dist ./dist
-
-COPY .env ./
-
-EXPOSE 3000
-
-CMD [ "node", "dist/main.js" ]
+# run applicaiton
+CMD [ "npm", "run", "start:prod" ]

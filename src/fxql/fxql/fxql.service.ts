@@ -43,21 +43,6 @@ export class FxqlService {
       })),
     });
     return result;
-
-    // const upsertPromises = entries.map(async (entry) => {
-    //   const existingEntry = await this.fxqlRepository.findOneBy({
-    //     sourceCurrency: entry.sourceCurrency,
-    //     destinationCurrency: entry.destinationCurrency,
-    //   });
-    //   if (existingEntry) {
-    //     Object.assign(existingEntry, entry);
-    //     return this.fxqlRepository.save(existingEntry);
-    //   } else {
-    //     return this.fxqlRepository.save(entry);
-    //   }
-    // });
-    // const savedEntries = await Promise.all(upsertPromises);
-    // return savedEntries;
   }
 
   async findAll(): Promise<FxqlEntry[]> {

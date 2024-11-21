@@ -1,22 +1,19 @@
-#  Node.js LTS version
 FROM node:18-alpine
 
-# set working directory
+# working directory
 WORKDIR /app
 
-# copy package.json
 COPY package*.json ./
 
-# install dependencies
-RUN npm install
+# install dependency
+RUN npm install --production
 
+# copy application files
 COPY . .
 
-# build
 RUN npm run build
 
-# expose port 3000
-EXPOSE 7000
+EXPOSE 8000
 
-# run applicaiton
+# run application
 CMD [ "npm", "run", "start:prod" ]

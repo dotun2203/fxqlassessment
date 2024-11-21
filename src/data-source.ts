@@ -5,6 +5,8 @@ import * as dotenv from 'dotenv';
 
 dotenv.config();
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 export const AppDataSource = new DataSource({
   type: 'postgres',
   host: process.env.DATABASE_HOST,
@@ -14,9 +16,15 @@ export const AppDataSource = new DataSource({
   database: process.env.DATABASE_NAME,
   entities: [FxqlEntry],
   migrations: ['dist/migrations/*.ts'],
-  synchronize: false,
-  logging: true,
-  ssl: {
-    rejectUnauthorized: false,
-  },
+  synchronize: process.env.NODE_ENV !== 'production',
+  logging: !isProduction,
+  ssl: isProduction
+    ? {
+        rejectUnauthorized: false,
+      }
+    : false,
+  //   ssl:
+  //     process.env.NODE_ENV === 'production'
+  //       ? { rejectUnauthorized: false }
+  //       : false,
 });
